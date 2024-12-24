@@ -25,3 +25,14 @@ export interface IUpdateUserInput {
   password?: string;
   role?: UserRole;
 }
+
+export interface ISignInInput {
+  email: string;
+  password: string;
+}
+
+export interface ISignInOutput {
+  user: IUser;
+  token: IAuthToken;
+}
+

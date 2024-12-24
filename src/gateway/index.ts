@@ -55,6 +55,7 @@ const initGatewayRouter = function () {
   const initServiceEndpoints = (service: any, router: Router, prefix = '') => {
     forEach(service, (method: any, methodName: any) => {
       let methodPath = prefix + '/' + methodName;
+      console.log(methodPath);
   
       if (typeof method == 'object') {
         initServiceEndpoints(method, router, methodPath);

@@ -2,9 +2,10 @@ import { InvalidRequestError } from "../../common/constants/errors";
 import { Validator } from "../../common/utils/validator";
 import { IUser } from "../../interfaces/models";
 import { UserService } from "../user";
-import { SignUpSchema } from "../user/interfaces/schema";
+import { SignInSchema, SignUpSchema } from "./interfaces/schema";
 import { AuthHydrator } from "./hydrator";
-import { ISignUpInput, ISignUpOutput } from "./interfaces";
+import { ISignInInput, ISignInOutput, ISignUpInput, ISignUpOutput } from "./interfaces";
+import { UserHydrator } from "../user/hydrator";
 
 
 async function signUp(params: ISignUpInput): Promise<ISignUpOutput> {
@@ -25,6 +26,27 @@ async function signUp(params: ISignUpInput): Promise<ISignUpOutput> {
   };
 }
 
+async function signIn(params: ISignInInput): Promise<ISignInOutput> {
+  const vParams = Validator.validateSchema(SignInSchema, params);
+  //check if user exists
+  const user = await UserService.getUserByEmail(vParams.email);
+  if (!user) {
+    throw new InvalidRequestError('User not found');
+  }
+  //check if password is correct
+  const isPasswordCorrect = UserHydrator.checkPassword(vParams.password, user.password!);
+  if (!isPasswordCorrect) {
+    throw new InvalidRequestError('Invalid password');
+  }
+  const token = AuthHydrator.generateToken(user.id!);
+  return {
+    user,
+    token
+  };
+}
+
+
 export const AuthService = {
     signUp,
+    signIn
 };
