@@ -1,6 +1,7 @@
 import { Course, CourseStatus, CourseCategory, CourseEnrollment, CourseProgress, CourseProgressStatus } from '@prisma/client';
 import prisma from '../db';
 import { ICreateCourseInput, IUpdateCourseInput } from '../services/course/interfaces';
+import { IVideo } from '../interfaces/models';
 
 async function createCourse(courseData: ICreateCourseInput): Promise<Course> {
   return prisma.course.create({
@@ -152,6 +153,27 @@ async function getVideoProgress(
   });
 }
 
+async function uploadVideoToCourse(
+  courseId: string, 
+  videoUrl: string, 
+  uploadedBy: string,
+  title: string,
+  description: string,
+  duration: number
+): Promise<IVideo> {
+  return prisma.video.create({
+    data: { 
+      courseId, 
+      url: videoUrl, 
+      uploadedBy,
+      title,
+      description,
+      duration
+    },
+  });
+}
+
+
 export const CourseDML = {
   createCourse,
   getCourseById,
@@ -167,4 +189,5 @@ export const CourseDML = {
   updateCourseProgress,
   getUserCourseProgress,
   getVideoProgress,
+  uploadVideoToCourse,
 };

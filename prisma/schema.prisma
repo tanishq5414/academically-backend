@@ -34,7 +34,7 @@ model Video {
   title String
   description String
   url String
-  courseId String
+  courseId String @db.ObjectId
   duration Int
   uploadedBy String
   createdAt DateTime @default(now())
