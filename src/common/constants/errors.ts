@@ -15,3 +15,11 @@ export class InvalidRequestError extends BRError {
     super(_error);
   }
 }
+
+export class EntityNotFoundError extends BRError {
+  constructor(message: string) {
+    const _error = Object.assign({}, ErrorType.ENTITY_NOT_FOUND);
+    _error.message += `: ${message}`;
+    super(_error);
+  }
+}

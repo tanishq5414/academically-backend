@@ -21,10 +21,12 @@ model Course {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   title String
   description String
+  instructorName String
   status CourseStatus @default(DRAFT)
   category CourseCategory @default(BEGINNER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  enrollments CourseEnrollment[]
 }
 
 model Video {
@@ -42,20 +44,25 @@ model Video {
 model CourseProgress {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   userId String
-  courseId String
-  videoId String
+  courseId String @db.ObjectId
+  videoId String @db.ObjectId
   progress Int
   courseProgressStatus CourseProgressStatus @default(IN_PROGRESS)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, courseId, videoId], name: "userId_courseId_videoId")
 }
 
 model CourseEnrollment {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   userId String
-  courseId String
+  courseId String @db.ObjectId
+  course Course @relation(fields: [courseId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, courseId], name: "userId_courseId")
 }
 
 enum CourseProgressStatus {

@@ -19,6 +19,12 @@ const ErrorType = {
         type: 'invalid_request',
         status: 400,
     },
+    ENTITY_NOT_FOUND: {
+        message: 'Entity not found',
+        type: 'entity_not_found',
+        status: 404,
+    },
+
 
 }
 
