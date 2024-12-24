@@ -1,11 +1,16 @@
 import { PrismaClient } from '@prisma/client';
 import prisma from '../db';
-import { CreateUserInput, IUser, UpdateUserInput } from '../interfaces/models';
-import { UserArgs } from '@prisma/client/runtime/library';
+import { IUser } from '../interfaces/models';
+import { ISignUpInput, IUpdateUserInput } from '../services/auth/interfaces';
 
-async function createUser(input: CreateUserInput): Promise<IUser> {
+async function createUser(userData: IUser): Promise<IUser> {
   return prisma.user.create({
-    data: input,
+    data:{
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        role: userData.role
+    }
   });
 }
 
@@ -21,7 +26,7 @@ async function getUserByEmail(email: string): Promise<IUser | null> {
   });
 }
 
-async function updateUser(id: string, input: UpdateUserInput): Promise<IUser> {
+async function updateUser(id: string, input: IUpdateUserInput): Promise<IUser> {
   return prisma.user.update({
     where: { id },
     data: input,

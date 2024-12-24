@@ -5,6 +5,8 @@ dotenv.config();
 
 const envSchema = z.object({
   PORT: z.string().transform(Number),
+  JWT_SECRET: z.string(),
+  JWT_EXPIRATION: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
