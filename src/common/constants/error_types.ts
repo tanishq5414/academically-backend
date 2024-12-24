@@ -21,3 +21,5 @@ const ErrorType = {
     },
 
 }
+
+export { ErrorType };

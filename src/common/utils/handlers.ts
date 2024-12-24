@@ -6,7 +6,7 @@ import { ResponseWrapper } from './parser';
 export const errorHandler = function (err: any, req: any, res: any, next: any) {
   let error = err;
   if (!err.type) {
-    error = new InternalServerError(err);
+    error = new InternalServerError(err.message);
   }
   console.error(error);
   let status = err.status || 500;
