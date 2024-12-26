@@ -8,8 +8,6 @@ const COMMON_REQ_KEYS = [
 
 const getCustomKeyFromHeaders = function (key: CommonApiReqParamKeys, headers: Headers) {
   switch (key) {
-    case CommonApiReqParamKeys.UserName:
-      return get(headers, HeaderFields.UserName, null);
     case CommonApiReqParamKeys.UserId:
       return get(headers, HeaderFields.AuthId, null);
     case CommonApiReqParamKeys.DeviceContext: {

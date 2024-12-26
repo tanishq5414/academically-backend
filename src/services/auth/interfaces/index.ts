@@ -8,7 +8,7 @@ export interface IAuthToken {
 }
 
 export interface ISignUpOutput {
-  user: IUser;
+  user: Omit<IUser, 'password'>;
   token: IAuthToken;
 }
 
@@ -32,7 +32,11 @@ export interface ISignInInput {
 }
 
 export interface ISignInOutput {
-  user: IUser;
+  user: Omit<IUser, 'password'>;
   token: IAuthToken;
+}
+
+export interface IGetUserByTokenInput {
+  token: string;
 }
 

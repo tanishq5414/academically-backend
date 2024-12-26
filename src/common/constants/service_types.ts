@@ -3,7 +3,6 @@ export enum HeaderFields {
   DeviceId = 'x-device-id',
   DeviceOs = 'x-device-os',
   AuthId = 'auth-id',
-  UserName = 'user-name',
 }
 
 export interface Headers {

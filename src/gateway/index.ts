@@ -1,7 +1,7 @@
 import { SingletonKeys } from '../common/constants/singleton';
 import Services from "./services";
 import { forEach, extend, get } from "lodash";
-import GatewayConfig from "./config";
+import GatewayConfig, { publicPaths } from "./config";
 import _ from "lodash";
 import { InternalServerError } from "../common/constants/errors";
 import { GATEWAY } from "./constants";
@@ -11,11 +11,12 @@ import * as Singleton from '../singleton';
 import { GatewayServiceConfig } from './types';
 import { AuthMiddlewareConfig } from './types';
 import { AuthMiddlewares } from './middlewares';
+import { isClientAuthenticated } from './middlewares/auth/client_authnetication';
 
 const initGateway = function(app: Application) {
     const gatewayRouter = initGatewayRouter();
 
-    app.use("/v1", gatewayRouter);
+    app.use("/api/v1", gatewayRouter);
 
     app.use(errorHandler);
 
@@ -79,8 +80,16 @@ const initGatewayRouter = function () {
     // Initialize Pre-Api Middlewares
     initPreApiMiddlewares(router, methodPath);
   
-    // Attach api controller
-    router.post(methodPath, method);
+    if(publicPaths.includes(methodPath)) {
+      router.post(methodPath, (req: any, res: any, next: any) => {
+        return method(req.body);
+      });
+    } else {
+      router.post(methodPath, isClientAuthenticated, (req: any, res: any, next: any) => {
+          req.body.userId = req.userId;
+          return method(req, res, next);
+      });
+    }
   };
   
   const initPreApiMiddlewares = (router: Router, methodPath: string) => {

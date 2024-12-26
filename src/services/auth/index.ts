@@ -4,7 +4,7 @@ import { IUser } from "../../interfaces/models";
 import { UserService } from "../user";
 import { SignInSchema, SignUpSchema } from "./interfaces/schema";
 import { AuthHydrator } from "./hydrator";
-import { ISignInInput, ISignInOutput, ISignUpInput, ISignUpOutput } from "./interfaces";
+import { IGetUserByTokenInput, ISignInInput, ISignInOutput, ISignUpInput, ISignUpOutput } from "./interfaces";
 import { UserHydrator } from "../user/hydrator";
 
 
@@ -20,8 +20,11 @@ async function signUp(params: ISignUpInput): Promise<ISignUpOutput> {
   //create token
   const token = AuthHydrator.generateToken(createUser.id!);
 
+  //remove password from user 
+  const userWithoutPassword = { ...createUser, password: undefined };
+
   return {
-    user: createUser,
+    user: userWithoutPassword,
     token
   };
 }
@@ -39,14 +42,17 @@ async function signIn(params: ISignInInput): Promise<ISignInOutput> {
     throw new InvalidRequestError('Invalid password');
   }
   const token = AuthHydrator.generateToken(user.id!);
+  //remove password from user 
+  const userWithoutPassword = { ...user, password: undefined };
   return {
-    user,
+    user: userWithoutPassword,
     token
   };
 }
 
 
+
 export const AuthService = {
     signUp,
-    signIn
+    signIn,
 };
