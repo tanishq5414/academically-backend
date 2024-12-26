@@ -81,9 +81,7 @@ const initGatewayRouter = function () {
     initPreApiMiddlewares(router, methodPath);
   
     if(publicPaths.includes(methodPath)) {
-      router.post(methodPath, (req: any, res: any, next: any) => {
-        return method(req.body);
-      });
+      router.post(methodPath, method);
     } else {
       router.post(methodPath, isClientAuthenticated, (req: any, res: any, next: any) => {
           req.body.userId = req.userId;

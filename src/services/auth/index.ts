@@ -37,7 +37,7 @@ async function signIn(params: ISignInInput): Promise<ISignInOutput> {
     throw new InvalidRequestError('User not found');
   }
   //check if password is correct
-  const isPasswordCorrect = UserHydrator.checkPassword(vParams.password, user.password!);
+  const isPasswordCorrect = await UserHydrator.checkPassword(vParams.password, user.password!);
   if (!isPasswordCorrect) {
     throw new InvalidRequestError('Invalid password');
   }

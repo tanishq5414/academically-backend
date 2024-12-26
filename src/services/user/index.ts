@@ -22,24 +22,20 @@ async function deleteUser(id: string): Promise<IUser> {
   return UserDML.deleteUser(id);
 }
 
-async function getUserById(params: IGetUserByIdInput): Promise<Omit<IUser, 'password'> | null> {
+async function getUserById(params: IGetUserByIdInput): Promise<IUser | null> {
   const user = await UserDML.getUserById(params.userId);    
   if (!user) {
     throw new InvalidRequestError('User not found');
   }
-  //remove password from user 
-  const userWithoutPassword = { ...user, password: undefined };
-  return userWithoutPassword;
+  return user;
 }
 
-async function getUserByEmail(email: string): Promise<Omit<IUser, 'password'> | null> {
+async function getUserByEmail(email: string): Promise<IUser | null> {
   const user = await UserDML.getUserByEmail(email);
   if (!user) {
     throw new InvalidRequestError('User not found');
   }
-  //remove password from user 
-  const userWithoutPassword = { ...user, password: undefined };
-  return userWithoutPassword;
+  return user;
 }
 
 async function checkPassword(userId: string, password: string): Promise<boolean> {
