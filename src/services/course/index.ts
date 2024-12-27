@@ -1,16 +1,20 @@
-import { IDeleteCourseInput, IGetCourseByIdInput, IGetCourseByStatusInput, IGetCourseByUserIdInput, IUpdateCourseInput } from "./interfaces";
+import { IDeleteCourseInput, IGetAllCoursesInput, IGetCourseByIdInput, IGetCourseByStatusInput, IGetCourseByUserIdInput, IUpdateCourseInput } from "./interfaces";
 import { ICourse } from "./interfaces";
 import { CourseDML } from "../../dml/course";
 import { ICreateCourseInput } from "./interfaces";
 import { EntityNotFoundError } from "../../common/constants/errors";
+import { Validator } from "../../common/utils/validator";
+import { CourseSchema } from "./schema";
 
 async function createCourse(params: ICreateCourseInput): Promise<ICourse> {
-  const course = await CourseDML.createCourse(params);
+  const validation = await Validator.validateSchema(CourseSchema.createCourseSchema, params);
+  const course = await CourseDML.createCourse(validation);
   return course;
 }
 
 async function updateCourse(params: IUpdateCourseInput): Promise<ICourse> {
-  const course = await CourseDML.updateCourse(params);
+  const validation = await Validator.validateSchema(CourseSchema.updateCourseSchema, params);
+  const course = await CourseDML.updateCourse(validation);
   return course;
 }
 
@@ -43,6 +47,11 @@ async function getCourseByStatus(params: IGetCourseByStatusInput): Promise<any> 
   return course;
 }
 
+async function getAllCourses(params: IGetAllCoursesInput): Promise<ICourse[]> {
+  const courses = await CourseDML.getAllCourses();
+  return courses;
+}
+
 export const CourseService = {
   createCourse,
   updateCourse,
@@ -50,4 +59,5 @@ export const CourseService = {
   getCourseById,
   getCourseByUserId,
   getCourseByStatus,
+  getAllCourses,
 };

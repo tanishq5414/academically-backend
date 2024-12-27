@@ -1,6 +1,6 @@
 import { Course, CourseStatus, CourseCategory, CourseEnrollment, CourseProgress, CourseProgressStatus } from '@prisma/client';
 import prisma from '../db';
-import { ICreateCourseInput, IUpdateCourseInput } from '../services/course/interfaces';
+import { ICourse, ICreateCourseInput, IUpdateCourseInput } from '../services/course/interfaces';
 import { IVideo } from '../interfaces/models';
 
 async function createCourse(courseData: ICreateCourseInput): Promise<Course> {
@@ -46,6 +46,15 @@ async function listCourses(
       createdAt: 'desc'
     }
   });
+}
+
+async function getAllCourses(): Promise<ICourse[]> {
+  const courses = await prisma.course.findMany({
+    orderBy: {
+      createdAt: 'desc'
+    }
+  });
+  return courses;
 }
 
 async function getCoursesByStatus(status: CourseStatus): Promise<Course[]> {
@@ -182,6 +191,7 @@ export const CourseDML = {
   listCourses,
   getCoursesByStatus,
   getCoursesByCategory,
+  getAllCourses,
   enrollUserInCourse,
   unenrollUserFromCourse,
   getUserEnrollments,

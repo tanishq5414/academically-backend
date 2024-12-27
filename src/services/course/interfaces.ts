@@ -66,3 +66,7 @@ export interface IGetCourseByStatusInput {
 export interface IGetCourseByCategoryInput {
   category: CourseCategory;
 }
+
+export interface IGetAllCoursesInput {
+  userId: string;
+}
