@@ -99,6 +99,17 @@ async function getUserEnrollments(userId: string): Promise<CourseEnrollment[]> {
   });
 }
 
+async function getEnrollmentByUserIdAndCourseId(userId: string, courseId: string): Promise<CourseEnrollment | null> {
+  return prisma.courseEnrollment.findUnique({
+    where: {
+      userId_courseId: {
+        userId,
+        courseId,
+      },
+    },
+  });
+}
+
 async function getCourseEnrollments(courseId: string): Promise<CourseEnrollment[]> {
   return prisma.courseEnrollment.findMany({
     where: { courseId },
@@ -200,4 +211,5 @@ export const CourseDML = {
   getUserCourseProgress,
   getVideoProgress,
   uploadVideoToCourse,
+  getEnrollmentByUserIdAndCourseId,
 };

@@ -1,10 +1,11 @@
-import { IDeleteCourseInput, IGetAllCoursesInput, IGetCourseByIdInput, IGetCourseByStatusInput, IGetCourseByUserIdInput, IUpdateCourseInput } from "./interfaces";
+import { ICourseEnrollment, IDeleteCourseInput, IEnrollInCourseInput, IGetAllCoursesInput, IGetCourseByIdInput, IGetCourseByStatusInput, IGetCourseByUserIdInput, IUnenrollFromCourseInput, IUpdateCourseInput } from "./interfaces";
 import { ICourse } from "./interfaces";
 import { CourseDML } from "../../dml/course";
 import { ICreateCourseInput } from "./interfaces";
-import { EntityNotFoundError } from "../../common/constants/errors";
+import { EntityNotFoundError, InvalidRequestError } from "../../common/constants/errors";
 import { Validator } from "../../common/utils/validator";
 import { CourseSchema } from "./schema";
+import { UserDML } from "../../dml/user";
 
 async function createCourse(params: ICreateCourseInput): Promise<ICourse> {
   const validation = await Validator.validateSchema(CourseSchema.createCourseSchema, params);
@@ -31,16 +32,20 @@ async function getCourseById(params: IGetCourseByIdInput): Promise<ICourse> {
   return course;
 }
 
-async function getCourseByUserId(params: IGetCourseByUserIdInput): Promise<any> {
+async function getCourseByUserId(params: IGetCourseByUserIdInput): Promise<ICourse[]> {
   const course = await CourseDML.getUserEnrollments(params.userId);
-  if (!course) {
+  const courseIds = course.map((course) => course.courseId);
+  const courseDetails = await Promise.all(courseIds.map((id) => CourseDML.getCourseById(id)));
+  const filteredCourseDetails = courseDetails.filter((course) => course !== null);
+  if (!filteredCourseDetails) {
     throw new EntityNotFoundError("User not enrolled in any course");
   }
-  return course;
+  return filteredCourseDetails;
 }
 
 async function getCourseByStatus(params: IGetCourseByStatusInput): Promise<any> {
   const course = await CourseDML.getCoursesByStatus(params.status);
+  
   if (!course) {
     throw new EntityNotFoundError("Course not found");
   }
@@ -52,6 +57,25 @@ async function getAllCourses(params: IGetAllCoursesInput): Promise<ICourse[]> {
   return courses;
 }
 
+async function enrollInCourse(params: IEnrollInCourseInput): Promise<ICourseEnrollment> {
+  //check if the course is already enrolled
+  const enrollment = await CourseDML.getEnrollmentByUserIdAndCourseId(params.userId, params.courseId);
+  if (enrollment) {
+    throw new InvalidRequestError("User already enrolled in the course");
+  }
+
+  const course = await CourseDML.enrollUserInCourse(params.userId, params.courseId);
+  if (!course) {
+    throw new EntityNotFoundError("Course not found");
+  }
+  return course;
+}
+
+async function unenrollFromCourse(params: IUnenrollFromCourseInput): Promise<ICourseEnrollment> {
+  const course = await CourseDML.unenrollUserFromCourse(params.userId, params.courseId);
+  return course;
+}
+
 export const CourseService = {
   createCourse,
   updateCourse,
@@ -60,4 +84,6 @@ export const CourseService = {
   getCourseByUserId,
   getCourseByStatus,
   getAllCourses,
+  enrollInCourse,
+  unenrollFromCourse,
 };

@@ -70,3 +70,13 @@ export interface IGetCourseByCategoryInput {
 export interface IGetAllCoursesInput {
   userId: string;
 }
+
+export interface IEnrollInCourseInput {
+  userId: string;
+  courseId: string;
+}
+  
+export interface IUnenrollFromCourseInput {
+  userId: string;
+  courseId: string;
+}

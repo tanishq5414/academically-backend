@@ -32,9 +32,6 @@ async function getUserById(params: IGetUserByIdInput): Promise<IUser | null> {
 
 async function getUserByEmail(email: string): Promise<IUser | null> {
   const user = await UserDML.getUserByEmail(email);
-  if (!user) {
-    throw new InvalidRequestError('User not found');
-  }
   return user;
 }
 
