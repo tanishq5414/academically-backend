@@ -15,12 +15,10 @@ async function getCourseById(id: string): Promise<Course | null> {
   });
 }
 
-async function updateCourse(
-  courseData: IUpdateCourseInput
-): Promise<Course> {
+async function updateCourse({ id, data }: { id: string; data: any }): Promise<ICourse> {
   return prisma.course.update({
-    where: { id: courseData.id },
-    data: courseData,
+    where: { id },
+    data
   });
 }
 
@@ -88,6 +86,13 @@ async function unenrollUserFromCourse(userId: string, courseId: string): Promise
       },
     },
   });
+}
+
+async function deleteEnrollments(courseId: string): Promise<number> {
+  const result = await prisma.courseEnrollment.deleteMany({
+    where: { courseId },
+  });
+  return result.count;
 }
 
 async function getUserEnrollments(userId: string): Promise<CourseEnrollment[]> {
@@ -199,6 +204,7 @@ export const CourseDML = {
   getCourseById,
   updateCourse,
   deleteCourse,
+  deleteEnrollments,
   listCourses,
   getCoursesByStatus,
   getCoursesByCategory,

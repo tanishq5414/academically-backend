@@ -15,11 +15,16 @@ async function createCourse(params: ICreateCourseInput): Promise<ICourse> {
 
 async function updateCourse(params: IUpdateCourseInput): Promise<ICourse> {
   const validation = await Validator.validateSchema(CourseSchema.updateCourseSchema, params);
-  const course = await CourseDML.updateCourse(validation);
+  const { id, ...updateData } = validation;
+  const course = await CourseDML.updateCourse({
+    id,
+    data: updateData
+  });
   return course;
 }
 
 async function deleteCourse(params: IDeleteCourseInput): Promise<ICourse> {
+  await CourseDML.deleteEnrollments(params.id);
   const course = await CourseDML.deleteCourse(params.id);
   return course;
 }
